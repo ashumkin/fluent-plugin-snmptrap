@@ -19,6 +19,6 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency "rake", '~> 0.9', '>= 0.9.6'
 
-  gem.add_runtime_dependency "fluentd", '~> 0.10', '>= 0.10.51'
+  gem.add_runtime_dependency "fluentd", '< 2', '>= 0.10.51'
   gem.add_runtime_dependency "snmp", '~> 1.1', '>= 1.1.1'
 end
