@@ -45,6 +45,47 @@ module Fluent
                               case trap
                               when SNMP::SNMPv1_Trap
                                 {
+                                    'source_ip' => trap.source_ip,
+                                    'enterprise' => trap.enterprise,
+                                    'oid' => trap.enterprise.to_str,
+                                    'name' => trap.enterprise.to_s,
+                                    'agent_addr' => trap.agent_addr.to_s,
+                                    'specific_trap' => trap.specific_trap,
+                                    'generic_trap' => trap.generic_trap.to_s,
+                                    'varbind' => Hash[*trap.varbind_list.map { |vb|
+                                      if SNMP::Integer === vb.value
+                                        [vb.name.to_s, { 'value' => vb.value.to_i, 'asn1_type' => vb.value.asn1_type}]
+                                      else
+                                        [vb.name.to_s, { 'value' => vb.value.to_s, 'asn1_type' => vb.value.asn1_type}]
+                                      end
+                                    }.flatten],
+                                    'timestamp' => trap.timestamp.to_s
+                                }
+                              when SNMP::SNMPv2_Trap
+                                {
+                                    'source_ip' => trap.source_ip,
+                                    'sys_up_time' => trap.sys_up_time.to_s,
+                                    'trap_oid' => trap.trap_oid,
+                                    'oid' => trap.trap_oid.to_str,
+                                    'name' => trap.trap_oid.to_s,
+                                    'request_id' => trap.request_id,
+                                    'error_status' => trap.error_status.to_s,
+                                    'error_index' => trap.error_index,
+                                    'varbind' => Hash[*trap.varbind_list.map { |vb|
+                                      if SNMP::Integer === vb.value
+                                        [vb.name.to_s, { 'value' => vb.value.to_i, 'asn1_type' => vb.value.asn1_type}]
+                                      else
+                                        [vb.name.to_s, { 'value' => vb.value.to_s, 'asn1_type' => vb.value.asn1_type}]
+                                      end
+                                    }.flatten]
+                                }
+                              end
+                            }
+                          when 'json'
+                            Proc.new { |trap|
+                              case trap
+                              when SNMP::SNMPv1_Trap
+                                {
                                   'source_ip' => trap.source_ip,
                                   'enterprise' => trap.enterprise,
                                   'oid' => trap.enterprise.to_str,
@@ -52,13 +93,13 @@ module Fluent
                                   'agent_addr' => trap.agent_addr.to_s,
                                   'specific_trap' => trap.specific_trap,
                                   'generic_trap' => trap.generic_trap.to_s,
-                                  'varbind' => Hash[*trap.varbind_list.map { |vb|
+                                  'varbind' => trap.varbind_list.map { |vb|
                                     if SNMP::Integer === vb.value
-                                      [vb.name.to_s, { 'value' => vb.value.to_i, 'asn1_type' => vb.value.asn1_type}]
+                                      {'name' => vb.name.to_s, 'oid' => vb.name.to_str, 'value' => vb.value.to_i.to_s, 'asn1_type' => vb.value.asn1_type}
                                     else
-                                      [vb.name.to_s, { 'value' => vb.value.to_s, 'asn1_type' => vb.value.asn1_type}]
+                                      {'name' => vb.name.to_s, 'oid' => vb.name.to_str, 'value' => vb.value.to_str, 'asn1_type' => vb.value.asn1_type}
                                     end
-                                  }.flatten],
+                                  },
                                   'timestamp' => trap.timestamp.to_s
                                 }
                               when SNMP::SNMPv2_Trap
@@ -71,13 +112,13 @@ module Fluent
                                   'request_id' => trap.request_id,
                                   'error_status' => trap.error_status.to_s,
                                   'error_index' => trap.error_index,
-                                  'varbind' => Hash[*trap.varbind_list.map { |vb|
+                                  'varbind' => trap.varbind_list.map { |vb|
                                     if SNMP::Integer === vb.value
-                                      [vb.name.to_s, { 'value' => vb.value.to_i, 'asn1_type' => vb.value.asn1_type}]
+                                      {'name' => vb.name.to_s, 'oid' => vb.name.to_str, 'value' => vb.value.to_i.to_s, 'asn1_type' => vb.value.asn1_type}
                                     else
-                                      [vb.name.to_s, { 'value' => vb.value.to_s, 'asn1_type' => vb.value.asn1_type}]
+                                      {'name' => vb.name.to_s, 'oid' => vb.name.to_str, 'value' => vb.value.to_str, 'asn1_type' => vb.value.asn1_type}
                                     end
-                                  }.flatten]
+                                  }
                                 }
                               end
                             }

@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |gem|
   gem.name          = "fluent-plugin-snmptrap"
-  gem.version       = "0.0.1"
+  gem.version       = "0.0.2"
   gem.date          = '2014-07-09'
   gem.authors       = ["Alex Pena"]
   gem.email         = ["pena.alex@gmail.com"]
